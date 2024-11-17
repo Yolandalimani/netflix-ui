@@ -3,7 +3,7 @@ import {
     onAuthStateChanged,
   } from "firebase/auth";
 import React, {useState} from 'react';
-import { navigate, Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import BackgroundImage from '../components/BackgroundImage';
 import Header from "../components/Header";
@@ -12,6 +12,7 @@ import { firebaseAuth } from "../utils/firebase-config";
 
 export default function Signup() {
     const [showPassword, setShowPassword] = useState(false);
+    const[error, setError] = useState('');
     const navigate = useNavigate();
     const [formValues, setFormValues] = useState({
         email: "",
@@ -23,6 +24,19 @@ export default function Signup() {
             await createUserWithEmailAndPassword(firebaseAuth, email, password);
           } catch (err) {
             console.log(err);
+            switch (err.code) {
+              case "auth/email-already-in-use":
+                setError("This email is already in use. Please try another email.");
+                break;
+              case "auth/invalid-email":
+                setError("Please enter a valid email address.");
+                break;
+              case "auth/weak-password":
+                setError("Password should be at least 6 characters.");
+                break;
+              default:
+                setError("An error occurred. Please try again.");
+            }
           }
       };
       onAuthStateChanged(firebaseAuth, (currentUser) => {
@@ -40,6 +54,7 @@ export default function Signup() {
                     <h4>Watch anywhere. Cancel anytime.</h4>
                     <h6>Ready to Watch? Enter your email to create or restart membership</h6>
                 </div>
+                {error && <ErrorStyle className="error-message">{error}</ErrorStyle>} 
                 <div className="form">
                     <input type = "email" placeholder="Email address" name="email" value={formValues.email} onChange={(e)=>setFormValues({
                             ...formValues, 
@@ -130,3 +145,6 @@ position: relative;
     }
   } 
 `;
+const ErrorStyle = styled.p`
+  color: red;
+`

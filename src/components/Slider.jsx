@@ -3,9 +3,10 @@ import styled from "styled-components";
 import CardSlider from './CardSlider';
 
 export default React.memo(function Slider({movies}) {
+    // const getMcd 
     const getMoviesFromRange = (from, to) => {
-        return movies.slice(from, to);
-    };
+      return Array.isArray(movies) ? movies.slice(from, to) : [];
+  };
   return (
     <Container>
       <CardSlider data={getMoviesFromRange(0, 10)} title="Trending Now" />

@@ -9,6 +9,7 @@ import { firebaseAuth } from "../utils/firebase-config";
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleLogin = async () => {
@@ -16,6 +17,7 @@ function Login() {
       await signInWithEmailAndPassword(firebaseAuth, email, password);
     } catch (error) {
       console.log(error.code);
+      setError("Incorrect username or password")
     }
   };
 
@@ -33,6 +35,7 @@ function Login() {
             <div className="title">
               <h3>Login</h3>
             </div>
+            {error && <ErrorStyle>{error}</ErrorStyle>}
             <div className="container flex column">
               <input
                 type="text"
@@ -95,5 +98,8 @@ const Container = styled.div`
     }
   }
 `;
+const ErrorStyle = styled.p`
+color: red;
+`
 
 export default Login;
